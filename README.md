@@ -19,14 +19,82 @@ Write the C Program using Linux Process API - Shared Memory
 Execute the C Program for the desired output. 
 
 # PROGRAM:
+Name:Hiba Nasreen M
 
+Register.No:212224040117
 ## Write a C program that illustrates two processes communicating using shared memory.
+writer.c
+```
+// C Program for Message Queue (Writer Process) 
+#include <stdio.h> 
+#include <sys/ipc.h> 
+#include <sys/msg.h> 
 
+// structure for message queue 
+struct mesg_buffer { 
+	long mesg_type; 
+	char mesg_text[100]; 
+} message; 
+int main() 
+{ 	key_t key; 
+	int msgid;
+    // ftok to generate unique key 
+	key = ftok("progfile", 65); 
+	// msgget creates a message queue 
+	// and returns identifier 
+	msgid = msgget(key, 0666 | IPC_CREAT); 
+	message.mesg_type = 1; 
+	printf("Write Data : "); 
+	gets(message.mesg_text); 
+	// msgsnd to send message 
+	msgsnd(msgid, &message, sizeof(message), 0); 
+	// display the message 
+	printf("Data send is : %s \n", message.mesg_text); 
+	return 0; 
+}
+```
+reader.c
+```
+// C Program for Message Queue (Reader Process)
+#include <stdio.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+
+// structure for message queue
+struct mesg_buffer {
+	long mesg_type;
+	char mesg_text[100];
+} message;
+int main()
+{
+	key_t key;
+	int msgid;
+    	// ftok to generate unique key
+	key = ftok("progfile", 65);
+	// msgget creates a message queue
+	// and returns identifier
+	msgid = msgget(key, 0666 | IPC_CREAT);
+	// msgrcv to receive message
+	msgrcv(msgid, &message, sizeof(message), 1, 0);
+	// display the message
+	printf("Data Received is : %s \n",
+			message.mesg_text);
+
+	// to destroy the message queue
+	msgctl(msgid, IPC_RMID, NULL);
+	return 0;
+}
+```
 
 
 
 
 ## OUTPUT
+![WhatsApp Image 2025-11-27 at 21 20 34_7e9ece04](https://github.com/user-attachments/assets/cccd09cb-cc8d-4bd9-8aa6-97e00baadbc9)
+
+
+![WhatsApp Image 2025-11-27 at 21 20 35_a9f41e8c](https://github.com/user-attachments/assets/b6dca867-130f-4bfc-9e86-da0036b24e25)
+
 
 
 # RESULT:
